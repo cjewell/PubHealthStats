@@ -8,14 +8,32 @@ output: html_document
 From the ggplot2 package, tidy up the "movies" data set, specifically r1:r10 and Action:Short.
 ```{r}
 library(ggplot2)
+library(gcookbook)
+library(nycflights13)
+library(broom)
+library(lubridate)
+library(RCurl)
 library(tidyr)
-library(dplyr)
-data("movies")
-movies
 
-newmovies <- gather(movies, rating, frequency, r1:r10, -title)
-newmovies <- gather(newmovies, genre, number, Action:Short, -title)
+data("movies");
+movies;
+
+newmovies <- gather(movies, rating, frequency, r1:r10, -title);
+newmovies <- gather(newmovies, genre, number, Action:Short, -title);
 head(newmovies, n=10)
 ```
 
 From the cafe data set, explain how would you tidy it up. Which variables?
+
+One of the variables that could be tidied up is the date.  You could segment it off into columns of day, month, and year in order to make it easier to work with - or you could use lubridate to generate easier to work with columns of dates.  Otherwise, it appears as most of the column headers contain names while the rows contain the data themselves.
+
+The way that I "untidied" the data was by lumping together day and day code into one column.
+
+```{r}
+url <- getURL("https://raw.githubusercontent.com/shv38339/statcomp597d/master/cafedata.csv")
+dat <- read.csv(file = textConnection(url), header = TRUE)
+
+dat$untidy_day = paste(dat$Day.Code, dat$Day.of.Week, sep="")
+head(dat)
+```
+
